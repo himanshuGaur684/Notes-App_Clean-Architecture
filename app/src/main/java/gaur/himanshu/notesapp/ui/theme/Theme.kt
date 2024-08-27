@@ -1,4 +1,4 @@
-package gaur.himanshu.notesapp.presentation.ui.theme
+package gaur.himanshu.notesapp.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
