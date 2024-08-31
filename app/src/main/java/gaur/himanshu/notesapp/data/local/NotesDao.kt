@@ -25,4 +25,7 @@ interface NotesDao {
     @Query("SELECT * FROM notes")
     fun getAllNotes(): Flow<List<NoteEntity>>
 
+    @Query("SELECT * FROM notes WHERE id=:id")
+    suspend fun getAllNoteId(id:Int): NoteEntity
+
 }
