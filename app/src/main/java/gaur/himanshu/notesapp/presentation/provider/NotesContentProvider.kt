@@ -13,6 +13,7 @@ import gaur.himanshu.notesapp.data.local.NotesDao
 import gaur.himanshu.notesapp.data.local.NotesDatabase
 import gaur.himanshu.notesapp.domain.model.NOTES_TABLE
 import gaur.himanshu.notesapp.domain.model.Note
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 
 class NotesContentProvider : ContentProvider() {
@@ -55,7 +56,7 @@ class NotesContentProvider : ContentProvider() {
                     .selection(selection, selectionArgs)
                     .orderBy(sortOrder)
                 val query = queryBuilder.create()
-                runBlocking { database.query(query) }
+                runBlocking(Dispatchers.IO) { database.query(query) }
             }
 
             SECOND_PATTERN -> {
@@ -65,7 +66,7 @@ class NotesContentProvider : ContentProvider() {
                     .selection("${Note::id.name} = ?", arrayOf(noteId.toString()))
 
                 val query = queryBuilder.create()
-                runBlocking { database.query(query) }
+                runBlocking(Dispatchers.IO) { database.query(query) }
             }
 
             else -> throw IllegalArgumentException("Unknown URI")
@@ -80,7 +81,7 @@ class NotesContentProvider : ContentProvider() {
         }
     }
 
-    override fun insert(uri: Uri, values: ContentValues?): Uri? {
+    override fun insert(uri: Uri, values: ContentValues?): Uri {
         val note = Note(
             title = values?.getAsString("title") ?: "",
             desc = values?.getAsString("desc") ?: ""
@@ -92,7 +93,7 @@ class NotesContentProvider : ContentProvider() {
 
     override fun delete(uri: Uri, p1: String?, p2: Array<out String>?): Int {
         val noteId = ContentUris.parseId(uri)
-        val id = runBlocking {
+        val id = runBlocking(Dispatchers.IO) {
             val note = notesDao.getNoteById(noteId.toInt())
             notesDao.delete(note)
         }
@@ -113,7 +114,7 @@ class NotesContentProvider : ContentProvider() {
             desc = values?.getAsString("desc") ?: note.desc,
             id = noteId.toInt()
         )
-        val id = runBlocking { notesDao.update(updateNote) }
+        val id = runBlocking(Dispatchers.IO) { notesDao.update(updateNote) }
         context?.contentResolver?.notifyChange(NOTES_CONTENT_URI, null)
         return id
     }

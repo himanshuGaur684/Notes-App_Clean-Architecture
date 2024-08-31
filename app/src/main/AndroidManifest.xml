@@ -4,7 +4,7 @@
 
     <permission
         android:name="gaur.himanshu.notesapp.READ_NOTES"
-        android:protectionLevel="signature" />
+        android:protectionLevel="normal" />
 
     <application
         android:name=".BaseApplication"
